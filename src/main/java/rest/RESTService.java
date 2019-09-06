@@ -1,7 +1,7 @@
 package rest;
 
-import dao.Storage;
-import dao.InMemoryStorage;
+import storage.Storage;
+import storage.InMemoryStorage;
 import rest.v1.AccountsAPI;
 import rest.v1.TransferAPI;
 

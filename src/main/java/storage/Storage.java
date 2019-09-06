@@ -1,5 +1,6 @@
-package dao;
+package storage;
 
+import dao.Account;
 import dao.Transaction;
 
 import java.util.List;

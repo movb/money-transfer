@@ -1,10 +1,8 @@
-package dao;
+package storage;
 
-import dao.Storage;
 import dao.Account;
 import dao.Transaction;
 
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,8 +37,6 @@ public class InMemoryStorage implements Storage {
 
     @Override
     public void transfer(Transaction transaction) {
-        Validators.validateTransaction(transaction);
-
         var accountFrom = accounts.get(transaction.getFrom());
         Validators.validateAccount(transaction.getFrom(), accountFrom);
         var accountTo = accounts.get(transaction.getTo());

@@ -5,7 +5,6 @@ import java.math.BigInteger;
 
 @Getter
 @Setter
-@Builder(toBuilder=true)
 public class Account {
     public Account(String id, long balance) {
         this.id = id;

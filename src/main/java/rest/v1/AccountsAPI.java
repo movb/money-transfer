@@ -1,12 +1,8 @@
 package rest.v1;
 
 import dao.Account;
-import dao.Storage;
-import util.Message;
-
-import java.util.Map;
-import java.util.List;
-import java.util.stream.Collectors;
+import storage.Storage;
+import util.ResponseWith;
 
 import spark.Request;
 import spark.Response;
@@ -30,17 +26,17 @@ public class AccountsAPI {
             Account account = gson.fromJson(request.body(), Account.class);
 
             if (account.getId() == null || account.getId().isEmpty()) {
-                return Message.Error(response, "Id empty");
+                return ResponseWith.Error(response, "Id empty");
             }
 
             if (!storage.create(account)) {
-                return Message.Error(response, String.format("Account id %s already exists", account.getId()));
+                return ResponseWith.Error(response, String.format("Account id %s already exists", account.getId()));
             }
 
             response.header("Location", "/api/v1/accounts/"+account.getId());
-            return Message.Ok(response);
+            return ResponseWith.Ok(response);
         } catch(Exception e) {
-            return Message.Error(response, String.format("Error: %s", e.toString()));
+            return ResponseWith.Error(response, String.format("Error: %s", e.toString()));
         }
     }
 
@@ -49,7 +45,7 @@ public class AccountsAPI {
         Account account = storage.get(id);
 
         if (account == null) {
-            return Message.NotFound(response);
+            return ResponseWith.NotFound(response);
         }
 
         return account;
