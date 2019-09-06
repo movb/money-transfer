@@ -10,6 +10,7 @@ import static spark.Spark.post;
 import static spark.Spark.delete;
 import static spark.Spark.path;
 import static spark.Spark.before;
+import static spark.Spark.port;
 
 import com.google.gson.Gson;
 
@@ -22,7 +23,8 @@ public class RESTService {
 
     Logger logger = LoggerFactory.getLogger(RESTService.class);
 
-    public RESTService() {
+    public RESTService(int servicePort) {
+        port(servicePort);
         AccountsAPI accountsApi = new rest.v1.AccountsAPI(storage);
         path("/api/v1/", () -> {
             before((req, res) -> {
