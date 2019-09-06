@@ -7,7 +7,6 @@ import dao.Transaction;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -16,19 +15,16 @@ import util.Validators;
 
 public class InMemoryStorage implements Storage {
     private final Map<String, Account> accounts = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> operationsLog = new ConcurrentHashMap<>();
 
     @Override
     public boolean create(Account account) {
-        Account previousAccount = accounts.putIfAbsent(account.getId(), account);
-        if (previousAccount != null) {
-            return false;
-        }
-        return true;
+        return accounts.putIfAbsent(account.getId(), account) == null;
     }
 
     @Override
     public Account get(String id) {
-        return accounts.get(id);
+        return  accounts.get(id);
     }
 
     @Override
@@ -42,62 +38,35 @@ public class InMemoryStorage implements Storage {
     }
 
     @Override
-    public void delete(String id) {
-        accounts.remove(id);
-    }
-
-    @Override
     public void transfer(Transaction transaction) {
         Validators.validateTransaction(transaction);
 
-        while(true) {
-            Account accountFrom = accounts.get(transaction.getFrom());
-            Validators.validateAccount(transaction.getFrom(), accountFrom);
-            Validators.validateBalance(accountFrom, transaction);
+        var accountFrom = accounts.get(transaction.getFrom());
+        Validators.validateAccount(transaction.getFrom(), accountFrom);
+        var accountTo = accounts.get(transaction.getTo());
+        Validators.validateAccount(transaction.getTo(), accountTo);
 
-            Account accountTo = accounts.get(transaction.getTo());
-            Validators.validateAccount(transaction.getTo(), accountTo);
+        Account minAcc, maxAcc;
+        if (accountFrom.getId().compareTo(accountTo.getId()) < 0) {
+            minAcc = accountFrom;
+            maxAcc = accountTo;
+        } else {
+            minAcc = accountTo;
+            maxAcc = accountFrom;
+        }
 
-            Account accountFromChanged = accountFrom.toBuilder().build();
-            accountFromChanged.setBalance(accountFrom.getBalance().add(BigInteger.valueOf(-transaction.getAmount())));
+        synchronized (minAcc) {
+            synchronized (maxAcc) {
+                Validators.validateBalance(accountFrom, transaction);
+                Validators.validateMaxBalance(accountFrom, transaction);
 
-            if (!accounts.replace(accountFrom.getId(), accountFrom, accountFromChanged))
-                continue;
-
-            while(true) {
-                accountTo = accounts.get(transaction.getTo());
-                try {
-                    Validators.validateAccount(transaction.getTo(), accountTo);
-                } catch (AccountNotExistsException accountToNotExistsException) {
-                    // return money to original account
-                    while(true) {
-                        accountFrom = accounts.get(transaction.getFrom());
-                        try {
-                            Validators.validateAccount(transaction.getFrom(), accountFrom);
-                        } catch (AccountNotExistsException accountFromNotExistsException) {
-                            // both accounts deleted
-                            throw new TransactionFailedException("both accounts deleted during transaction");
-                        }
-                        accountFromChanged = accountFrom.toBuilder().build();
-                        accountFromChanged.setBalance(accountFrom.getBalance().add(
-                                BigInteger.valueOf(transaction.getAmount())));
-                        if (!accounts.replace(accountFrom.getId(), accountFrom, accountFromChanged))
-                            continue;
-
-                        break;
-                    }
-                    throw accountToNotExistsException;
+                if (operationsLog.putIfAbsent(transaction.getIdempotencyKey(), true) == null) {
+                    accountFrom.setBalance(accountFrom.getBalance() - transaction.getAmount());
+                    accountTo.setBalance(accountTo.getBalance() + transaction.getAmount());
+                } else {
+                    throw new TransactionFailedException("Idempotency key is already used");
                 }
-                Account accountToChanged = accountTo.toBuilder().build();
-                accountToChanged.setBalance(accountTo.getBalance().add(BigInteger.valueOf(transaction.getAmount())));
-
-                if (!accounts.replace(accountToChanged.getId(), accountTo, accountToChanged))
-                    continue;
-
-                break;
             }
-
-            break;
         }
     }
 }

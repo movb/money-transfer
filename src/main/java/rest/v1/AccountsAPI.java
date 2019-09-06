@@ -30,7 +30,7 @@ public class AccountsAPI {
             Account account = gson.fromJson(request.body(), Account.class);
 
             if (account.getId() == null || account.getId().isEmpty()) {
-                return Message.Error(response, "Field id empty");
+                return Message.Error(response, "Id empty");
             }
 
             if (!storage.create(account)) {
@@ -42,13 +42,6 @@ public class AccountsAPI {
         } catch(Exception e) {
             return Message.Error(response, String.format("Error: %s", e.toString()));
         }
-    }
-
-    public Object Delete(Request request, Response response) {
-        String id = request.params(":id");
-        storage.delete(id);
-
-        return Message.Ok(response);
     }
 
     public Object Get(Request request, Response response) {

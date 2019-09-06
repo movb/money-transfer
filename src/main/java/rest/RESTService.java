@@ -31,7 +31,6 @@ public class RESTService {
             get("/accounts", accountsApi::List, gson::toJson);
             get("/accounts/:id", accountsApi::Get, gson::toJson);
             post("/accounts", accountsApi::Create, gson::toJson);
-            delete("/accounts/:id", accountsApi::Delete, gson::toJson);
         });
 
         TransferAPI transfersApi = new rest.v1.TransferAPI(storage);
