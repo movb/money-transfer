@@ -9,15 +9,24 @@ but made a simple storage based on ConcurrentHashMap. The design is also simple,
 versioning APIs. I also believe that transfer API must API supports idempotency for safely retrying requests without
 accidentally performing the same operation twice, so I added optional idempotencyKey field to transaction request.
 
+Used [sparkjava](http://sparkjava.com) for implementing REST service, [gson](https://github.com/google/gson)
+for working with JSON, [lombok](https://projectlombok.org/) for slightly easier setters and getters,
+[Commons Cli](https://commons.apache.org/proper/commons-cli/) for command line argument passing, 
+[Jersey](https://jersey.github.io/) and [JUnit](https://junit.org) for unit and functional testing. 
+
+## Build:
+```
+mvn clean package
+```
 ## Run:
 - Run the app, default port 8080:
 ```
-mvn exec:java
+java -jar target/money-transfer-1.0-SNAPSHOT.jar
 ```
 
 - Run the app, specify the port:
 ```
-mvn exec:java -p 6666
+java -jar target/money-transfer-1.0-SNAPSHOT.jar -p 6666
 ```
 
 - Run Test Cases:
@@ -84,4 +93,5 @@ Header:
 - **from** _(required)_ - id to charge.
 - **to** _(required)_ - id to transfer moeny.
 - **amount** _(required)_ - a positive integer in cents representing amount to transfer.
-- **idempotencyKey** - transfer API supports idempotency for safely retrying requests without accidentally performing the same operation twice.
+- **idempotencyKey** - transfer API supports idempotency for safely retrying requests without accidentally performing
+the same operation twice.
