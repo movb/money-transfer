@@ -1,4 +1,4 @@
-import rest.RESTService;
+import rest.Service;
 
 import org.apache.commons.cli.*;
 
@@ -23,6 +23,6 @@ public class Main {
             System.exit(1);
         }
 
-        RESTService service = new RESTService(port);
+        Service service = new Service(port);
     }
 }

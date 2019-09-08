@@ -31,6 +31,7 @@ public class InMemoryStorage implements Storage {
                 accounts.entrySet()
                         .stream()
                         .map(e -> e.getValue())
+                        .sorted((lh,rh)-> lh.getId().compareTo(rh.getId()))
                         .collect(Collectors.toList());
         return listOfAccounts;
     }
@@ -56,7 +57,8 @@ public class InMemoryStorage implements Storage {
                 Validators.validateBalance(accountFrom, transaction);
                 Validators.validateMaxBalance(accountFrom, transaction);
 
-                if (operationsLog.putIfAbsent(transaction.getIdempotencyKey(), true) == null) {
+                if (!idempotencyKeyPresent(transaction) ||
+                        operationsLog.putIfAbsent(transaction.getIdempotencyKey(), true) == null) {
                     accountFrom.setBalance(accountFrom.getBalance() - transaction.getAmount());
                     accountTo.setBalance(accountTo.getBalance() + transaction.getAmount());
                 } else {
@@ -64,5 +66,15 @@ public class InMemoryStorage implements Storage {
                 }
             }
         }
+    }
+
+    @Override
+    public void clear() {
+        accounts.clear();
+        operationsLog.clear();
+    }
+
+    private boolean idempotencyKeyPresent(Transaction transaction) {
+        return transaction.getIdempotencyKey() != null && !transaction.getIdempotencyKey().isEmpty();
     }
 }

@@ -14,9 +14,7 @@ public class Validators {
         if (transaction.getTo() == null || transaction.getTo().isEmpty()) {
             throw new InvalidParamsException("prarm 'to' is empty");
         }
-        if (transaction.getIdempotencyKey() == null || transaction.getIdempotencyKey().isEmpty()) {
-            throw new InvalidParamsException("param 'idempotencyKey' is empty");
-        }
+
         if (transaction.getFrom().equals(transaction.getTo())) {
             throw new IdenticalAccountsException();
         }

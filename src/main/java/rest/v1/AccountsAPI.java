@@ -10,8 +10,8 @@ import spark.Response;
 import com.google.gson.Gson;
 
 public class AccountsAPI {
-    private Storage storage;
-    private Gson gson = new Gson();
+    private final Storage storage;
+    private final Gson gson = new Gson();
 
     public AccountsAPI(Storage storage) {
         this.storage = storage;

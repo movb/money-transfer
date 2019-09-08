@@ -1,27 +1,27 @@
 package rest.v1;
 
-import storage.Storage;
 import dao.Transaction;
+import storage.Storage;
 import util.ResponseWith;
+import util.Validators;
 
 import spark.Request;
 import spark.Response;
 import com.google.gson.Gson;
-import util.Validators;
 
 public class TransferAPI {
-    private Storage storage;
-    private Gson gson = new Gson();
+    private final Storage storage;
+    private final Gson gson = new Gson();
 
     public TransferAPI(Storage storage) {
         this.storage = storage;
     }
 
     public Object transfer(Request request, Response response) {
-        Transaction transaction = gson.fromJson(request.body(), Transaction.class);
-        Validators.validateTransaction(transaction);
-
         try {
+            Transaction transaction = gson.fromJson(request.body(), Transaction.class);
+            Validators.validateTransaction(transaction);
+
             storage.transfer(transaction);
         } catch (Exception e) {
             return ResponseWith.Error(response, e.getMessage());

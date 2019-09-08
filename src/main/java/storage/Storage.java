@@ -11,4 +11,6 @@ public interface Storage {
     boolean create(Account account);
 
     void transfer(Transaction transaction);
+
+    void clear();
 }

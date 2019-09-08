@@ -40,8 +40,6 @@ class InMemoryStorageTest {
         storage.create(account2);
 
         List<Account> result = storage.getAll();
-        Collections.sort(result, (Account left, Account right) -> left.getId().compareTo(right.getId()));
-
         assertEquals(List.of(account1, account2), result);
     }
 
@@ -102,5 +100,18 @@ class InMemoryStorageTest {
                 () -> storage.transfer(new Transaction("2", "1", Long.MAX_VALUE, "key1"));
 
         assertThrows(TransactionFailedException.class, makeOverflowTransfer);
+    }
+
+    @Test
+    @DisplayName("Clear storage")
+    void clear() {
+        Account account1 = new Account("1", 100);
+        storage.create(account1);
+        Account account2 = new Account("2", 200);
+        storage.create(account2);
+
+        storage.clear();
+
+        assertEquals(Collections.EMPTY_LIST, storage.getAll());
     }
 }

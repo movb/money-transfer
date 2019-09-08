@@ -20,7 +20,7 @@ public class ResponseWith {
     }
 
     public static Message Ok(Response response) {
-        response.status(400);
+        response.status(200);
         return Message.builder().status("ok").build();
     }
 }
