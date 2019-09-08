@@ -139,7 +139,7 @@ public class ServiceApiV1Test {
         response = client.target(URI.create(transferUri))
                 .request()
                 .post(Entity.json(payload));
-        assertEquals(400, response.getStatus());
+        assertEquals(200, response.getStatus());
 
         Account acc1 = storage.get("test1");
         assertNotNull(acc1);

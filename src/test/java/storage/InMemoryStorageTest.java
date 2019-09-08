@@ -59,7 +59,7 @@ class InMemoryStorageTest {
 
     @Test
     @DisplayName("Using idempotency key twice")
-    void transferIdempotancyError() {
+    void transferIdempotancyNoError() {
         Account account1 = new Account("id1", 100);
         storage.create(account1);
         Account account2 = new Account("id2", 200);
@@ -67,10 +67,16 @@ class InMemoryStorageTest {
 
         storage.transfer(new Transaction("id2", "id1", 10, "key1"));
 
+        assertEquals(190, storage.get("id2").getBalance());
+        assertEquals(110, storage.get("id1").getBalance());
+
         Executable makeTransfer =
                 () -> storage.transfer(new Transaction("id2", "id1", 10, "key1"));
 
-        assertThrows(TransactionFailedException.class, makeTransfer);
+        assertDoesNotThrow(makeTransfer);
+
+        assertEquals(190, storage.get("id2").getBalance());
+        assertEquals(110, storage.get("id1").getBalance());
     }
 
     @Test
