@@ -60,15 +60,15 @@ class InMemoryStorageTest {
     @Test
     @DisplayName("Using idempotency key twice")
     void transferIdempotancyError() {
-        Account account1 = new Account("1", 100);
+        Account account1 = new Account("id1", 100);
         storage.create(account1);
-        Account account2 = new Account("2", 200);
+        Account account2 = new Account("id2", 200);
         storage.create(account2);
 
-        storage.transfer(new Transaction("2", "1", 10, "key1"));
+        storage.transfer(new Transaction("id2", "id1", 10, "key1"));
 
         Executable makeTransfer =
-                () -> storage.transfer(new Transaction("2", "1", 10, "key1"));
+                () -> storage.transfer(new Transaction("id2", "id1", 10, "key1"));
 
         assertThrows(TransactionFailedException.class, makeTransfer);
     }
@@ -76,28 +76,28 @@ class InMemoryStorageTest {
     @Test
     @DisplayName("Transfer validation errors")
     void transferValidationErrors() {
-        Account account1 = new Account("1", 100);
+        Account account1 = new Account("id1", 100);
         storage.create(account1);
-        Account account2 = new Account("2", 200);
+        Account account2 = new Account("id2", 200);
         storage.create(account2);
 
         Executable makeTransferFromNonExistingAccount =
-                () -> storage.transfer(new Transaction("3", "1", 10, "key1"));
+                () -> storage.transfer(new Transaction("id3", "id1", 10, "key1"));
 
         assertThrows(AccountNotExistsException.class, makeTransferFromNonExistingAccount);
 
         Executable makeTransferToNonExistingAccount =
-                () -> storage.transfer(new Transaction("2", "3", 10, "key1"));
+                () -> storage.transfer(new Transaction("id2", "id3", 10, "key1"));
 
         assertThrows(AccountNotExistsException.class, makeTransferToNonExistingAccount);
 
         Executable makeInsufficientBalanceTransfer =
-                () -> storage.transfer(new Transaction("2", "1", 1000, "key1"));
+                () -> storage.transfer(new Transaction("id2", "id1", 1000, "key1"));
 
         assertThrows(TransactionFailedException.class, makeInsufficientBalanceTransfer);
 
         Executable makeOverflowTransfer =
-                () -> storage.transfer(new Transaction("2", "1", Long.MAX_VALUE, "key1"));
+                () -> storage.transfer(new Transaction("id2", "id1", Long.MAX_VALUE, "key1"));
 
         assertThrows(TransactionFailedException.class, makeOverflowTransfer);
     }
@@ -105,9 +105,9 @@ class InMemoryStorageTest {
     @Test
     @DisplayName("Clear storage")
     void clear() {
-        Account account1 = new Account("1", 100);
+        Account account1 = new Account("id1", 100);
         storage.create(account1);
-        Account account2 = new Account("2", 200);
+        Account account2 = new Account("id2", 200);
         storage.create(account2);
 
         storage.clear();
