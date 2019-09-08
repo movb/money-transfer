@@ -6,7 +6,7 @@ Simple money transfer rest service.
 
 Trying to stick to the principle of "the simpler the better", I did not use different database implementations,
 but made a simple storage based on ConcurrentHashMap. The design is also simple, but have some extensibility -
-versioning APIs. I also believe that transfer API must API supports idempotency for safely retrying requests without
+versioning APIs. I also believe that transfer API must supports idempotency for safely retrying requests without
 accidentally performing the same operation twice, so I added optional idempotencyKey field to transaction request.
 
 Used [sparkjava](http://sparkjava.com) for implementing REST service, [gson](https://github.com/google/gson)
