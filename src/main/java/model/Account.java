@@ -10,6 +10,6 @@ public class Account {
         this.balance = balance;
     }
 
-    String id;
+    private String id;
     long balance;
 }
