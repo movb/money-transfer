@@ -71,6 +71,40 @@ Header:
 }
 ```
 
+#### Get account:
+##### Request: 
+```sh
+GET /api/v1/accounts/someid
+```
+
+##### Response:
+```sh
+{  
+   "id":"someid",
+   "balance":100
+} 
+```
+
+#### Get all accounts:
+##### Request: 
+```sh
+GET /api/v1/accounts
+```
+
+##### Response:
+```sh
+[
+    {  
+       "id":"someid1",
+       "balance":100
+    },
+    {  
+       "id":"someid2",
+       "balance":1000
+    }
+]
+```
+
 #### Transaction:
 ##### Request:
 ```sh
