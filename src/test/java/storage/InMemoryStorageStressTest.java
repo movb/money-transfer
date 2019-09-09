@@ -31,7 +31,7 @@ class InMemoryStorageStressTest {
 
         Executable transfer = () ->
                 IntStream.range(1, 101).parallel().forEach(value -> {
-                    storage.transfer(new Transaction("1", "2", value, "key" + value));
+                    storage.transfer(new Transaction("1", "2", value));
                 });
 
         assertDoesNotThrow(transfer);
@@ -50,7 +50,7 @@ class InMemoryStorageStressTest {
         Executable transfer = () ->
                 IntStream.range(0, 200).parallel().forEach(value -> {
                     try {
-                        storage.transfer(new Transaction("1", "2", 10, "key" + value));
+                        storage.transfer(new Transaction("1", "2", 10));
                     } catch (Exception e) {
                         failedOperations.incrementAndGet();
                     }
@@ -63,5 +63,20 @@ class InMemoryStorageStressTest {
         assertEquals(100, failedOperations.get());
     }
 
+    @Test
+    @DisplayName("A lot of parallel transactions with same idempotency key")
+    void ParallelTransactionsWithSameIdempotencyKey() {
+        storage.create(new Account("1", 10000));
+        storage.create(new Account("2", 0));
 
+        Executable transfer = () ->
+                IntStream.range(1, 101).parallel().forEach(value -> {
+                    storage.transfer(new Transaction("1", "2", 100, "equalIdempotencyKey"));
+                });
+
+        assertDoesNotThrow(transfer);
+
+        assertEquals(10000 - 100, storage.get("1").getBalance());
+        assertEquals(100, storage.get("2").getBalance());
+    }
 }

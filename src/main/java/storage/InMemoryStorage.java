@@ -80,14 +80,15 @@ public class InMemoryStorage implements Storage {
             synchronized (minAcc) {
                 synchronized (maxAcc) {
                     Validators.validateBalance(accountFrom, transaction);
-                    Validators.validateMaxBalance(accountFrom, transaction);
+                    Validators.validateMaxBalance(accountTo, transaction);
 
                     if (!idempotencyKeyPresent(transaction) ||
                             operationsLog.replace(transaction, Transaction.Status.PERFORMING, Transaction.Status.SUCCESS)) {
                         accountFrom.setBalance(accountFrom.getBalance() - transaction.getAmount());
                         accountTo.setBalance(accountTo.getBalance() + transaction.getAmount());
                     } else {
-                        throw new TransactionFailedException("Idempotency key is already used");
+                        // we cannot be in this situation by contact above
+                        throw new TransactionFailedException("Some service indepotency issue");
                     }
                 }
             }
