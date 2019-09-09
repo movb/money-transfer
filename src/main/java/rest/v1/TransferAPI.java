@@ -1,6 +1,6 @@
 package rest.v1;
 
-import dao.Transaction;
+import model.Transaction;
 import storage.Storage;
 import util.ResponseWith;
 import util.Validators;

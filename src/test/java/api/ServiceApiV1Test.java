@@ -1,6 +1,6 @@
 package api;
 
-import dao.Account;
+import model.Account;
 import org.junit.jupiter.api.*;
 import rest.v1.Handler;
 import spark.Spark;

@@ -1,10 +1,9 @@
 package util;
 
-import dao.Account;
-import dao.Transaction;
+import model.Account;
+import model.Transaction;
 
 import exceptions.*;
-import java.math.BigInteger;
 
 public class Validators {
     public static void validateTransaction(Transaction transaction) {

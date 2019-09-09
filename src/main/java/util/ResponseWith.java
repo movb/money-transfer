@@ -1,8 +1,7 @@
 package util;
 
-import dao.Message;
+import model.Message;
 
-import java.util.Map;
 import java.util.Optional;
 
 import spark.Response;

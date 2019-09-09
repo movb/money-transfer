@@ -1,6 +1,6 @@
 package rest.v1;
 
-import dao.Account;
+import model.Account;
 import storage.Storage;
 import util.ResponseWith;
 

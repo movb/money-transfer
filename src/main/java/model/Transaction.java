@@ -1,4 +1,4 @@
-package dao;
+package model;
 
 import lombok.Value;
 import lombok.EqualsAndHashCode;

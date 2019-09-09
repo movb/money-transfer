@@ -1,7 +1,6 @@
-package dao;
+package model;
 
 import lombok.*;
-import java.math.BigInteger;
 
 @Getter
 @Setter

@@ -1,7 +1,7 @@
 package storage;
 
-import dao.Account;
-import dao.Transaction;
+import model.Account;
+import model.Transaction;
 import exceptions.*;
 
 import org.junit.jupiter.api.BeforeEach;
